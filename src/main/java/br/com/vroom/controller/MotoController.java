@@ -1,8 +1,10 @@
 package br.com.vroom.controller;
 
 import br.com.vroom.model.Moto;
+import br.com.vroom.model.Setor;
 import br.com.vroom.model.dto.MotoRequest;
 import br.com.vroom.repository.MotoRepository;
+import br.com.vroom.repository.SetorRepository;
 import jakarta.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,9 @@ public class MotoController {
     @Autowired
     private MotoRepository repository;
 
+    @Autowired
+    private SetorRepository setorRepository;
+
     @GetMapping
     public List<Moto> index() {
         return repository.findAll();
@@ -33,12 +38,15 @@ public class MotoController {
     @PostMapping
     public ResponseEntity<Moto> create(@RequestBody @Valid MotoRequest motoRequest) {
         
+        Setor setor = getSetorById(motoRequest.getSetorId());
+
         var moto = Moto.builder()
                     .chassi(motoRequest.getChassi())
                     .id(motoRequest.getId())
                     .modelo(motoRequest.getModelo())
                     .placa(motoRequest.getPlaca())
                     .problema(motoRequest.getProblema())
+                    .setor(setor)
                     .build();
 
         repository.save(moto);
@@ -55,12 +63,15 @@ public class MotoController {
     public Moto update(@PathVariable Long id, @RequestBody @Valid MotoRequest motoRequest) {
         motoRequest.setId(id);
 
+        Setor setor = getSetorById(motoRequest.getSetorId());
+
         var moto = Moto.builder()
                     .chassi(motoRequest.getChassi())
                     .id(motoRequest.getId())
                     .modelo(motoRequest.getModelo())
                     .placa(motoRequest.getPlaca())
                     .problema(motoRequest.getProblema())
+                    .setor(setor)
                     .build();
 
         return repository.save(moto);
@@ -72,5 +83,13 @@ public class MotoController {
                 .orElseThrow(
                         () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
                 );
-    }   
+    }
+
+    private Setor getSetorById(Long id) {
+        return setorRepository
+                .findById(id)
+                .orElseThrow(
+                    () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
+                );
+    }
 }

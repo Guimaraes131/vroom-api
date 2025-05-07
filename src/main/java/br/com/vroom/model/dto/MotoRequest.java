@@ -5,9 +5,11 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
+@Builder
 public class MotoRequest {
     private Long id;
 
@@ -24,4 +26,7 @@ public class MotoRequest {
     @NotNull(message = "o problema da moto é obrigatório")
     @Enumerated(EnumType.STRING)
     private CategoriaProblema problema;
+
+    @NotNull(message = "o setor é obrigatório")
+    private Long setorId;
 }
