@@ -5,19 +5,28 @@ import br.com.vroom.model.Setor;
 import br.com.vroom.model.dto.MotoRequest;
 import br.com.vroom.repository.MotoRepository;
 import br.com.vroom.repository.SetorRepository;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/motos")
 public class MotoController {
+	private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private MotoRepository repository;
@@ -25,9 +34,15 @@ public class MotoController {
     @Autowired
     private SetorRepository setorRepository;
 
+    @Operation(tags = "Moto", summary = "Listar motos paginadas", description = "Devolve a lista de motos paginadas")
+    @Cacheable("motos")
     @GetMapping
-    public List<Moto> index() {
-        return repository.findAll();
+    public Page<Moto> index(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size) {
+    
+            Pageable pageable = PageRequest.of(page, size);
+            return repository.findAll(pageable);
     }
 
     @GetMapping("{id}")
@@ -36,8 +51,11 @@ public class MotoController {
     }
 
     @PostMapping
+    @ResponseStatus(code = HttpStatus.CREATED)
+    @Operation(responses = @ApiResponse(responseCode = "400", description = "Validação falhou"))
     public ResponseEntity<Moto> create(@RequestBody @Valid MotoRequest motoRequest) {
-        
+        log.info("Cadastrando moto " + motoRequest.getPlaca());
+
         Setor setor = getSetorById(motoRequest.getSetorId());
 
         var moto = Moto.builder()
@@ -55,12 +73,18 @@ public class MotoController {
     }
 
     @DeleteMapping("{id}")
+    @CacheEvict(value = "motos", allEntries = true)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void destroy(@PathVariable Long id) {
+        log.info("Apagando moto " + id);
         repository.delete(getMotoById(id));
     }
 
     @PutMapping("{id}")
+    @CacheEvict(value = "motos", allEntries = true)
     public Moto update(@PathVariable Long id, @RequestBody @Valid MotoRequest motoRequest) {
+        log.info("Atualizando moto " + id + " para " + motoRequest);
+
         motoRequest.setId(id);
 
         Setor setor = getSetorById(motoRequest.getSetorId());
