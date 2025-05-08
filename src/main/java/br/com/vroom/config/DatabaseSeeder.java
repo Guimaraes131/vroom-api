@@ -3,14 +3,18 @@ package br.com.vroom.config;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import br.com.vroom.model.CargoUsuario;
 import br.com.vroom.model.CategoriaProblema;
 import br.com.vroom.model.ModeloMoto;
 import br.com.vroom.model.Moto;
 import br.com.vroom.model.Setor;
+import br.com.vroom.model.Usuario;
 import br.com.vroom.repository.MotoRepository;
 import br.com.vroom.repository.SetorRepository;
+import br.com.vroom.repository.UsuarioRepository;
 import jakarta.annotation.PostConstruct;
 
 @Component
@@ -21,6 +25,12 @@ public class DatabaseSeeder {
 
     @Autowired
     private SetorRepository setorRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @PostConstruct
     public void init() {
@@ -49,5 +59,19 @@ public class DatabaseSeeder {
         );
 
         motoRepository.saveAll(motos);
+
+        usuarioRepository.saveAll(List.of(
+            Usuario.builder()
+                .email("admin@gmail.com.br")
+                .senha(passwordEncoder.encode("12345"))
+                .role(CargoUsuario.ADMIN)
+                .build(),
+
+            Usuario.builder()
+                .email("usuario@gmail.com.br")
+                .senha(passwordEncoder.encode("67891"))
+                .role(CargoUsuario.USER)
+                .build()
+        ));
     }
 }
