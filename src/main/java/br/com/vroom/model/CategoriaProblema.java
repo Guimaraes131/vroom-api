@@ -6,6 +6,7 @@ public enum CategoriaProblema {
     DOCUMENTACAO("Verde"),
     ESTETICO("Amarelo"),
     SEGURANCA("Laranja"),
+    MULTIPLO("Rosa"),
     CONFORME("Branco");
 
     private final String corAssociada;

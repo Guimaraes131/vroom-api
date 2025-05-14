@@ -27,9 +27,6 @@ public class DatabaseSeeder {
     private SetorRepository setorRepository;
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @PostConstruct
@@ -40,6 +37,7 @@ public class DatabaseSeeder {
         Setor setorEstetico = Setor.builder().nome("Setor Estético").problemaRelacionado(CategoriaProblema.ESTETICO).build();
         Setor setorSeguranca = Setor.builder().nome("Setor de Segurança").problemaRelacionado(CategoriaProblema.SEGURANCA).build();
         Setor setorConforme = Setor.builder().nome("Setor Conforme").problemaRelacionado(CategoriaProblema.CONFORME).build();
+        Setor setorMultiplo = Setor.builder().nome("Setor Multiplo").problemaRelacionado(CategoriaProblema.MULTIPLO).build();
 
         List<Setor> setores = List.of(setorMecanico, setorEletrico, setorDocumentacao, setorEstetico, setorSeguranca, setorConforme);
 
@@ -56,22 +54,10 @@ public class DatabaseSeeder {
             Moto.builder().chassi("M1N2O3P4Q5R6S7T8A").modelo(ModeloMoto.MOTTUSPORT).placa("BVC6N89").problema(CategoriaProblema.ESTETICO).setor(setorEstetico).build(),
             Moto.builder().chassi("B1V2C3D4E5F6G7H8T").modelo(ModeloMoto.MOTTUE).placa("LMN7P01").problema(CategoriaProblema.SEGURANCA).setor(setorSeguranca).build(),
             Moto.builder().chassi("W1X2Y3Z4A5B6C7D8E").modelo(ModeloMoto.MOTTUPOP).placa("OPQ8W23").problema(CategoriaProblema.DOCUMENTACAO).setor(setorDocumentacao).build()
+            Moto.builder().chassi("W1X2Y3Z4A5B6C7D8O").modelo(ModeloMoto.MOTTUE).placa("OPQ8W12").problema(CategoriaProblema.MULTIPLO).setor(setorMultiplo).build()
+            Moto.builder().chassi("W1X2Y3Z4A5B6C7D8T").modelo(ModeloMoto.MOTTUSPORT).placa("OPQ8W85").problema(CategoriaProblema.MULTIPLO).setor(setorMultiplo).build()
         );
 
         motoRepository.saveAll(motos);
-
-        usuarioRepository.saveAll(List.of(
-            Usuario.builder()
-                .email("admin@gmail.com.br")
-                .senha(passwordEncoder.encode("12345"))
-                .role(CargoUsuario.ADMIN)
-                .build(),
-
-            Usuario.builder()
-                .email("usuario@gmail.com.br")
-                .senha(passwordEncoder.encode("67891"))
-                .role(CargoUsuario.USER)
-                .build()
-        ));
     }
 }
