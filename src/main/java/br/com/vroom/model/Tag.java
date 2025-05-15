@@ -28,5 +28,6 @@ public class Tag {
 
     private String cor;
 
-    private Boolean disponivel;
+    @Builder.Default
+    private Boolean disponivel = true;
 }

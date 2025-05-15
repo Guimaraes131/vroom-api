@@ -61,7 +61,7 @@ public class DatabaseSeeder {
 
         List<Moto> motos = List.of(
             Moto.builder().chassi("1A2B3C4D5E6F7G8H9").modelo(ModeloMoto.MOTTUPOP).placa("QAS0R12").problema(CategoriaProblema.MECANICO).setor(setorMecanico).tag(b2).build(),
-            Moto.builder().chassi("9X8Y7Z6W5V4U3T2S1").modelo(ModeloMoto.MOTTUSPORT).placa("POI1T34").problema(CategoriaProblema.ELETRICO).setor(setorEletrico).tag(a2).build(),
+            Moto.builder().chassi("9X8Y7Z6W5V4U3T2S1").modelo(ModeloMoto.MOTTUSPORT).placa("POI1T34").problema(CategoriaProblema.ELETRICO).setor(setorEletrico).tag(a3).build(),
             Moto.builder().chassi("1Q2W3E4R5T6Y7U8I9").modelo(ModeloMoto.MOTTUE).placa("DFG0H56").problema(CategoriaProblema.DOCUMENTACAO).setor(setorDocumentacao).tag(a2).build(),
             Moto.builder().chassi("A1B2C3D4E5F6G7H8I").modelo(ModeloMoto.MOTTUPOP).placa("JKL2M78").problema(CategoriaProblema.ESTETICO).setor(setorEstetico).tag(a4).build(),
             Moto.builder().chassi("P0O9I8U7Y6T5R4E3W").modelo(ModeloMoto.MOTTUSPORT).placa("ZXV3N90").problema(CategoriaProblema.SEGURANCA).setor(setorSeguranca).tag(a5).build(),

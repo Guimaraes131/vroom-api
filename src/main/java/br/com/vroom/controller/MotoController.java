@@ -7,18 +7,18 @@ import br.com.vroom.model.dto.MotoRequest;
 import br.com.vroom.repository.MotoRepository;
 import br.com.vroom.repository.SetorRepository;
 import br.com.vroom.repository.TagRepository;
+import br.com.vroom.service.MotoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,18 +34,19 @@ public class MotoController {
     private MotoRepository repository;
 
     @Autowired
+    private MotoService motoService;
+
+    @Autowired
     private SetorRepository setorRepository;
 
     @Autowired
     private TagRepository tagRepository;
 
-    @Operation(tags = "Moto", summary = "Listar motos paginadas", description = "Devolve a lista de motos paginadas")
+    @Operation(tags = "Moto", summary = "Listar motos", description = "Devolve a lista de motos")
     @Cacheable("motos")
     @GetMapping
-    public Page<Moto> index(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-
-        return repository.findAll(pageable);
+    public List<Moto> index(@RequestParam(required = false) String ordem) {
+        return motoService.listarMotos(ordem);
     }
 
     @GetMapping("{id}")

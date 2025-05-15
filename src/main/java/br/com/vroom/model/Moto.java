@@ -27,7 +27,7 @@ public class Moto {
     @Size(min = 17, max = 17)
     private String chassi;
 
-    @Size(min = 5, max = 255)
+    @Size(min = 0, max = 255)
     @Builder.Default
     private String descricaoProblema = "";
 
