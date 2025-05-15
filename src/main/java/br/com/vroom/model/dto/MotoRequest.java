@@ -11,6 +11,7 @@ import lombok.Data;
 @Data
 @Builder
 public class MotoRequest {
+
     private Long id;
 
     @Size(min = 7, max = 7, message = "A placa deve ter 7 caracteres")
@@ -29,4 +30,7 @@ public class MotoRequest {
 
     @NotNull(message = "o setor é obrigatório")
     private Long setorId;
+
+    @NotNull(message = "a coordenada da tag é obrigatória")
+    private String tagCoordenada;
 }

@@ -27,6 +27,10 @@ public class Moto {
     @Size(min = 17, max = 17)
     private String chassi;
 
+    @Size(min = 5, max = 255)
+    @Builder.Default
+    private String descricaoProblema = "";
+
     @NotNull
     @Enumerated(EnumType.STRING)
     private ModeloMoto modelo;
@@ -40,4 +44,6 @@ public class Moto {
     @JsonIgnore
     private Setor setor;
 
+    @OneToOne
+    private Tag tag;
 }

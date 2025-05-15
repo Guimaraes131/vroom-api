@@ -2,9 +2,11 @@ package br.com.vroom.controller;
 
 import br.com.vroom.model.Moto;
 import br.com.vroom.model.Setor;
+import br.com.vroom.model.Tag;
 import br.com.vroom.model.dto.MotoRequest;
 import br.com.vroom.repository.MotoRepository;
 import br.com.vroom.repository.SetorRepository;
+import br.com.vroom.repository.TagRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
@@ -34,15 +36,16 @@ public class MotoController {
     @Autowired
     private SetorRepository setorRepository;
 
+    @Autowired
+    private TagRepository tagRepository;
+
     @Operation(tags = "Moto", summary = "Listar motos paginadas", description = "Devolve a lista de motos paginadas")
     @Cacheable("motos")
     @GetMapping
-    public Page<Moto> index(
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "10") int size) {
-    
-            Pageable pageable = PageRequest.of(page, size);
-            return repository.findAll(pageable);
+    public Page<Moto> index(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        return repository.findAll(pageable);
     }
 
     @GetMapping("{id}")
@@ -51,13 +54,15 @@ public class MotoController {
     }
 
     @PostMapping
-    @ResponseStatus(code = HttpStatus.CREATED)
     @Operation(responses = @ApiResponse(responseCode = "400", description = "Validação falhou"))
     public ResponseEntity<Moto> create(@RequestBody @Valid MotoRequest motoRequest) {
         log.info("Cadastrando moto " + motoRequest.getPlaca());
 
         Setor setor = getSetorById(motoRequest.getSetorId());
+        Tag tag = getTagByCoordenada(motoRequest.getTagCoordenada());
 
+        tag.setDisponivel(false);
+        
         var moto = Moto.builder()
                     .chassi(motoRequest.getChassi())
                     .id(motoRequest.getId())
@@ -65,6 +70,7 @@ public class MotoController {
                     .placa(motoRequest.getPlaca())
                     .problema(motoRequest.getProblema())
                     .setor(setor)
+                    .tag(tag)
                     .build();
 
         repository.save(moto);
@@ -85,17 +91,17 @@ public class MotoController {
     public Moto update(@PathVariable Long id, @RequestBody @Valid MotoRequest motoRequest) {
         log.info("Atualizando moto " + id + " para " + motoRequest);
 
-        motoRequest.setId(id);
-
         Setor setor = getSetorById(motoRequest.getSetorId());
+        Tag tag = getTagByCoordenada(motoRequest.getTagCoordenada());
 
         var moto = Moto.builder()
                     .chassi(motoRequest.getChassi())
-                    .id(motoRequest.getId())
+                    .id(id)
                     .modelo(motoRequest.getModelo())
                     .placa(motoRequest.getPlaca())
                     .problema(motoRequest.getProblema())
                     .setor(setor)
+                    .tag(tag)
                     .build();
 
         return repository.save(moto);
@@ -112,6 +118,14 @@ public class MotoController {
     private Setor getSetorById(Long id) {
         return setorRepository
                 .findById(id)
+                .orElseThrow(
+                    () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
+                );
+    }
+
+    private Tag getTagByCoordenada(String coordenada) {
+        return tagRepository
+                .findByCoordenada(coordenada)
                 .orElseThrow(
                     () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
                 );

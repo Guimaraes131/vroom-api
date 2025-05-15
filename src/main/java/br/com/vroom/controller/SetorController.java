@@ -25,7 +25,8 @@ import org.springframework.data.domain.Pageable;
 @RestController
 @RequestMapping("/setores")
 public class SetorController {
-	private final Logger log = LoggerFactory.getLogger(getClass());
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
     
     @Autowired
     private SetorRepository repository;
@@ -36,12 +37,10 @@ public class SetorController {
     @GetMapping
     @Operation(tags = "Setor", summary = "Listar setores paginados", description = "Devolve a lista de setores paginados")
     @Cacheable("setores")
-    public Page<Setor> index(
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "10") int size) {
-    
-            Pageable pageable = PageRequest.of(page, size);
-            return repository.findAll(pageable);
+    public Page<Setor> index(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        
+        return repository.findAll(pageable);
     }
 
     @GetMapping("{id}")
@@ -50,7 +49,6 @@ public class SetorController {
     }
 
     @PostMapping
-    @ResponseStatus(code = HttpStatus.CREATED)
     @Operation(responses = @ApiResponse(responseCode = "400", description = "Validação falhou"))
     public ResponseEntity<Setor> create(@RequestBody @Valid Setor setor) {
         log.info("Cadastrando setor " + setor.getNome());
@@ -66,10 +64,10 @@ public class SetorController {
         log.info("Apagando setor " + id + "e sua lista de motos");
 
         getSetorById(id).getMotos().forEach(moto -> moto.setSetor(null));
+        
         motoRepository.deleteAll(getSetorById(id).getMotos());
         repository.delete(getSetorById(id));
     }
-
 
     private Setor getSetorById(Long id) {
         return repository
@@ -78,5 +76,4 @@ public class SetorController {
                         () -> new ResponseStatusException(HttpStatus.NOT_FOUND)
                 );
     }
-
 }
