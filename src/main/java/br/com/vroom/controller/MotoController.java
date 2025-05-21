@@ -56,6 +56,7 @@ public class MotoController {
 
     @PostMapping
     @Operation(responses = @ApiResponse(responseCode = "400", description = "Validação falhou"))
+    @CacheEvict(value = "motos", allEntries = true)
     public ResponseEntity<Moto> create(@RequestBody @Valid MotoRequest motoRequest) {
         log.info("Cadastrando moto " + motoRequest.getPlaca());
 

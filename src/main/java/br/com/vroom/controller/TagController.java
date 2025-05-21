@@ -50,6 +50,7 @@ public class TagController {
 
     @PostMapping
     @Operation(responses = @ApiResponse(responseCode = "400", description = "Validação falhou"))
+    @CacheEvict(value = "tags", allEntries = true)
     public ResponseEntity<Tag> create(@RequestBody @Valid TagRequest tagRequest) {
 
         var tag = Tag.builder()

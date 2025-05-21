@@ -50,6 +50,7 @@ public class SetorController {
 
     @PostMapping
     @Operation(responses = @ApiResponse(responseCode = "400", description = "Validação falhou"))
+    @CacheEvict(value = "setores", allEntries = true)
     public ResponseEntity<Setor> create(@RequestBody @Valid Setor setor) {
         log.info("Cadastrando setor " + setor.getNome());
         repository.save(setor);
